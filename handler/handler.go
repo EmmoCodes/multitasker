@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -27,65 +26,58 @@ type ShortURL struct {
 }
 
 func New() error {
-	var wg sync.WaitGroup
 	fileName := "data.json"
-	wg.Add(1)
 
-	go func() error {
-		defer wg.Done()
-		trimmedURL, userInput, err := TrimURL(&wg)
+	trimmedURL, userInput, err := TrimURL()
+	if err != nil {
+		panic(err)
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return errors.New("Failed to create id.")
+	}
+
+	originalURL := URLInfo{
+		Id:          id,
+		OriginalURL: userInput,
+		CreatedAt:   time.Now(),
+	}
+
+	shortenedURL := ShortURL{
+		Id:        id,
+		ShortURL:  trimmedURL,
+		CreatedAt: time.Now(),
+		URLInfo:   originalURL,
+	}
+
+	var urls []ShortURL
+
+	if _, err := os.Stat(fileName); err == nil {
+		content, err := os.ReadFile(fileName)
 		if err != nil {
-			panic(err)
+			return errors.New("Failed to find file.")
 		}
 
-		id, err := uuid.NewV4()
-		if err != nil {
-			return errors.New("Failed to create id.")
-		}
-
-		originalURL := URLInfo{
-			Id:          id,
-			OriginalURL: userInput,
-			CreatedAt:   time.Now(),
-		}
-
-		shortenedURL := ShortURL{
-			Id:        id,
-			ShortURL:  trimmedURL,
-			CreatedAt: time.Now(),
-			URLInfo:   originalURL,
-		}
-
-		var urls []ShortURL
-
-		if _, err := os.Stat(fileName); err == nil {
-			content, err := os.ReadFile(fileName)
+		if len(content) > 0 {
+			err = json.Unmarshal(content, &urls)
 			if err != nil {
-				return errors.New("Failed to find file.")
-			}
-
-			if len(content) > 0 {
-				err = json.Unmarshal(content, &urls)
-				if err != nil {
-					return errors.New("Failed to unmarshal .")
-				}
+				return errors.New("Failed to unmarshal .")
 			}
 		}
+	}
 
-		urls = append(urls, shortenedURL)
-		newData, err := json.Marshal(urls)
-		if err != nil {
-			return errors.New("Failed to marshal")
-		}
+	urls = append(urls, shortenedURL)
+	newData, err := json.Marshal(urls)
+	if err != nil {
+		return errors.New("Failed to marshal")
+	}
 
-		err = os.WriteFile(fileName, newData, 0644)
-		if err != nil {
-			return errors.New("Failed to write to file.")
-		}
+	err = os.WriteFile(fileName, newData, 0644)
+	if err != nil {
+		return errors.New("Failed to write to file.")
+	}
 
-		return nil
-	}()
-	wg.Wait()
 	fmt.Println("***Created.***")
 	return nil
 }
@@ -102,7 +94,7 @@ func validateURL() (string, error) {
 	return userInput, nil
 }
 
-func TrimURL(wg *sync.WaitGroup) (string, string, error) {
+func TrimURL() (string, string, error) {
 
 	userInput, err := validateURL()
 	if err != nil {
