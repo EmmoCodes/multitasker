@@ -1,0 +1,23 @@
+[
+  {
+    "id": "dce4bce7-c196-4c05-ba9b-60b786fb10f4",
+    "url": "nature/birds/",
+    "created_at": "2025-07-16T20:33:53.895041177+02:00",
+    "original_url": {
+      "id": "8213bbf3-9261-4598-a280-5c584363de95",
+      "url": "https://www.example.com/nature/birds/",
+      "created_at": "2025-07-16T20:33:53.895039194+02:00"
+    }
+  },
+  {
+    "id": "1b17eb50-79bb-4225-81ce-ef8c13103b25",
+    "url": "lenovo/thinkpad/",
+    "created_at": "2025-07-16T20:34:10.185310359+02:00",
+    "original_url": {
+      "id": "2d62533d-1e81-4968-a91f-090e79969fac",
+      "url": "https://www.google.com/lenovo/thinkpad",
+      "created_at": "2025-07-16T20:34:10.185308291+02:00"
+    }
+  }
+]
+
