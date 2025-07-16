@@ -1,29 +1,154 @@
-The goal of this exercise is to create an http.Handler that will look at the path of any incoming web request and determine if it should redirect the user to a new page, much like URL shortener would.
+# 🧩 Projekt: URL Shortener API (mit Go)
 
-For instance, if we have a redirect setup for /dogs to https://www.somesite.com/a-story-about-dogs we would look for any incoming web requests with the path /dogs and redirect them.
+## 🎯 Ziel
 
-To complete this exercises you will need to implement the stubbed out methods in handler.go. There are a good bit of comments explaining what each method should do, and there is also a main/main.go source file that uses the package to help you test your code and get an idea of what your program should be doing.
+Entwickle eine **REST-API in Go**, die **lange URLs in kurze Codes umwandelt** und bei Aufruf des Codes automatisch weiterleitet.
+Optional: Admin-Interface und User-Auth.
 
-I suggest first commenting out all of the code in main.go related to the YAMLHandler function and focusing on implementing the MapHandler function first.
+---
 
-Once you have that working, focus on parsing the YAML using the gopkg.in/yaml.v2 package. Note: You will need to go get this package if you don’t have it already.
+## 🔧 Tech Stack
 
-After you get the YAML parsing down, try to convert the data into a map and then use the MapHandler to finish the YAMLHandler implementation. Eg you might end up with some code like this:
+* **Sprache:** Go (Golang)
+* **Web Framework:** `net/http`, optional `gorilla/mux` oder `fiber`
+* **Datenbank:** In-Memory (für Start), optional SQLite / PostgreSQL
+* **Persistenz:** optional JSON-Datei
+* **(Optional) Auth:** JWT für Benutzer
+* **(Optional) Frontend:** kleines Web-UI oder Swagger-Doku
 
-func YAMLHandler(yaml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-parsedYaml, err := parseYAML(yaml)
-if err != nil {
-return nil, err
+---
+
+## 📚 Anforderungen (MVP)
+
+### 🔹 Endpunkt: `POST /api/shorten`
+
+* **Beschreibung:** Erzeugt eine Kurz-URL
+* **Request Body (JSON):**
+
+```json
+{
+  "url": "https://example.com/super/lange/url"
 }
-pathMap := buildMap(parsedYaml)
-return MapHandler(pathMap, fallback), nil
+```
+
+* **Antwort (JSON):**
+
+```json
+{
+  "short_url": "http://localhost:8080/abc123"
 }
+```
 
-But in order for this to work you will need to create functions like parseYAML and buildMap on your own. This should give you ample experience working with YAML data.
-Bonus
+* **Verhalten:**
 
-As a bonus exercises you can also…
+  * Die Kurz-URL wird als zufälliger 6–8-stelliger Code generiert.
+  * Mehrfacheinsendungen derselben URL dürfen denselben oder neuen Code erhalten (je nach Modus).
+  * Validierung: Nur gültige URLs akzeptieren.
 
-    Update the main/main.go source file to accept a YAML file as a flag and then load the YAML from a file rather than from a string.
-    Build a JSONHandler that serves the same purpose, but reads from JSON data.
-    Build a Handler that doesn’t read from a map but instead reads from a database. Whether you use BoltDB, SQL, or something else is entirely up to you.
+### 🔹 Endpunkt: `GET /{shortcode}`
+
+* **Beschreibung:** Leitet zur echten URL weiter (HTTP 301/302)
+* **Beispiel:**
+  `GET /abc123 → redirect → https://example.com/super/lange/url`
+
+### 🔹 Endpunkt: `GET /api/info/{shortcode}`
+
+* **Beschreibung:** Gibt Infos zur Short-URL zurück
+* **Antwort:**
+
+```json
+{
+  "original_url": "https://example.com/super/lange/url",
+  "short_url": "http://localhost:8080/abc123",
+  "created_at": "2025-07-15T12:34:56Z",
+  "clicks": 42
+}
+```
+
+### 🔹 Error Handling
+
+* `404` bei nicht gefundenem Code
+* `400` bei ungültiger URL
+* Saubere JSON-Fehlermeldungen
+
+---
+
+## 🗃️ Speicheroptionen
+
+### Stufe 1 (Pflicht):
+
+* **In-Memory Map\[string]URLInfo**
+
+```go
+type URLInfo struct {
+    OriginalURL string
+    CreatedAt   time.Time
+    Clicks      int
+}
+```
+
+### Stufe 2 (optional):
+
+* Persistenz in JSON-Datei beim Herunterfahren und Laden beim Start
+
+### Stufe 3 (fortgeschritten):
+
+* SQLite oder PostgreSQL mit `sqlx` oder `gorm`
+
+---
+
+## 🧪 Tests
+
+* Schreibe Unit Tests für:
+
+  * URL-Validierung
+  * Shortcode-Generierung
+  * API-Handler
+* Nutze `go test`, z. B.:
+
+```bash
+go test ./...
+```
+
+---
+
+## 🚀 Erweiterungen (für Bonuspunkte im Portfolio)
+
+| Feature          | Beschreibung                                            |
+| ---------------- | ------------------------------------------------------- |
+| 🔒 Auth          | Registrieren + Einloggen (JWT), User hat eigene Links   |
+| 🌐 Rate Limiting | Pro IP oder Benutzer nur X Shorten-Anfragen pro Minute  |
+| 📈 Analytics     | Endpunkt mit Statistik (Clicks pro Tag, Top URLs, etc.) |
+| 🧼 Vanity-URLs   | Wunsch-Codes (z. B. `myshop`) statt Zufalls-Strings     |
+| 📁 Admin-Panel   | Web-GUI mit Go Template, React oder Svelte              |
+| 📜 Swagger       | OpenAPI-Spezifikation für alle Endpunkte                |
+
+---
+
+## 🧱 Projektstruktur (Vorschlag)
+
+```text
+urlshortener/
+├── main.go
+├── handlers/
+│   └── shortener.go
+├── models/
+│   └── url.go
+├── storage/
+│   └── memory.go
+├── utils/
+│   └── validate.go
+├── tests/
+│   └── handler_test.go
+├── go.mod
+```
+
+---
+
+## 🧠 Präsentationsideen fürs Portfolio
+
+* Zeige **Live-Demo** mit `ngrok` oder auf `fly.io`
+* Dokumentiere mit `README.md` und Screenshots/Postman
+* Baue eine kleine `curl`- oder Swagger-Doku ein
+* Zeige gute **Projektstruktur + Testabdeckung**
+* Link zu GitHub-Repo mit sauberem Commit-Verlauf
