@@ -27,8 +27,6 @@ func validateURL(input string) error {
 }
 
 func TrimURL(input string) (string, error) {
-	var urlSlice []string
-	var shortURL string
 	input = "https://www.google.com/gopher/nice/jo/hallo/heyo"
 
 	err := validateURL(input)
@@ -37,13 +35,23 @@ func TrimURL(input string) (string, error) {
 	}
 
 	trimmedURL := strings.Split(input, "/")
+	shortURL := joinURL(trimmedURL)
+
+	return shortURL, nil
+}
+
+func joinURL(trimmedURL []string) string {
+
+	var urlSlice []string
+
 	urlSlice = append(urlSlice, trimmedURL...)
-	for i := 4; i < len(urlSlice); i++ {
+
+	for i := 3; i < len(urlSlice); i++ {
 		urlSlice[i] = urlSlice[i] + "/"
 	}
 
-	urlSlice = urlSlice[4:]
+	urlSlice = urlSlice[3:]
+	joinedURL := strings.Join(urlSlice, "")
+	return joinedURL
 
-	shortURL = strings.Join(urlSlice, "")
-	return shortURL, nil
 }
