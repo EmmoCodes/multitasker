@@ -9,12 +9,12 @@ Optional: Admin-Interface und User-Auth.
 
 ## 🔧 Tech Stack
 
-* **Sprache:** Go (Golang)
-* **Web Framework:** `net/http`, optional `gorilla/mux` oder `fiber`
-* **Datenbank:** In-Memory (für Start), optional SQLite / PostgreSQL
-* **Persistenz:** optional JSON-Datei
-* **(Optional) Auth:** JWT für Benutzer
-* **(Optional) Frontend:** kleines Web-UI oder Swagger-Doku
+- **Sprache:** Go (Golang)
+- **Web Framework:** `net/http`, optional `gorilla/mux` oder `fiber`
+- **Datenbank:** In-Memory (für Start), optional SQLite / PostgreSQL
+- **Persistenz:** optional JSON-Datei
+- **(Optional) Auth:** JWT für Benutzer
+- **(Optional) Frontend:** kleines Web-UI oder Swagger-Doku
 
 ---
 
@@ -22,8 +22,8 @@ Optional: Admin-Interface und User-Auth.
 
 ### 🔹 Endpunkt: `POST /api/shorten`
 
-* **Beschreibung:** Erzeugt eine Kurz-URL
-* **Request Body (JSON):**
+- **Beschreibung:** Erzeugt eine Kurz-URL
+- **Request Body (JSON):**
 
 ```json
 {
@@ -31,7 +31,7 @@ Optional: Admin-Interface und User-Auth.
 }
 ```
 
-* **Antwort (JSON):**
+- **Antwort (JSON):**
 
 ```json
 {
@@ -39,22 +39,21 @@ Optional: Admin-Interface und User-Auth.
 }
 ```
 
-* **Verhalten:**
-
-  * Die Kurz-URL wird als zufälliger 6–8-stelliger Code generiert.
-  * Mehrfacheinsendungen derselben URL dürfen denselben oder neuen Code erhalten (je nach Modus).
-  * Validierung: Nur gültige URLs akzeptieren.
+- **Verhalten:**
+  - Die Kurz-URL wird als zufälliger 6–8-stelliger Code generiert.
+  - Mehrfacheinsendungen derselben URL dürfen denselben oder neuen Code erhalten (je nach Modus).
+  - Validierung: Nur gültige URLs akzeptieren.
 
 ### 🔹 Endpunkt: `GET /{shortcode}`
 
-* **Beschreibung:** Leitet zur echten URL weiter (HTTP 301/302)
-* **Beispiel:**
+- **Beschreibung:** Leitet zur echten URL weiter (HTTP 301/302)
+- **Beispiel:**
   `GET /abc123 → redirect → https://example.com/super/lange/url`
 
 ### 🔹 Endpunkt: `GET /api/info/{shortcode}`
 
-* **Beschreibung:** Gibt Infos zur Short-URL zurück
-* **Antwort:**
+- **Beschreibung:** Gibt Infos zur Short-URL zurück
+- **Antwort:**
 
 ```json
 {
@@ -67,9 +66,9 @@ Optional: Admin-Interface und User-Auth.
 
 ### 🔹 Error Handling
 
-* `404` bei nicht gefundenem Code
-* `400` bei ungültiger URL
-* Saubere JSON-Fehlermeldungen
+- `404` bei nicht gefundenem Code
+- `400` bei ungültiger URL
+- Saubere JSON-Fehlermeldungen
 
 ---
 
@@ -77,7 +76,7 @@ Optional: Admin-Interface und User-Auth.
 
 ### Stufe 1 (Pflicht):
 
-* **In-Memory Map\[string]URLInfo**
+- **In-Memory Map\[string]URLInfo**
 
 ```go
 type URLInfo struct {
@@ -89,22 +88,22 @@ type URLInfo struct {
 
 ### Stufe 2 (optional):
 
-* Persistenz in JSON-Datei beim Herunterfahren und Laden beim Start
+- Persistenz in JSON-Datei beim Herunterfahren und Laden beim Start
 
 ### Stufe 3 (fortgeschritten):
 
-* SQLite oder PostgreSQL mit `sqlx` oder `gorm`
+- SQLite oder PostgreSQL mit `sqlx` oder `gorm`
 
 ---
 
 ## 🧪 Tests
 
-* Schreibe Unit Tests für:
+- Schreibe Unit Tests für:
+  - URL-Validierung
+  - Shortcode-Generierung
+  - API-Handler
 
-  * URL-Validierung
-  * Shortcode-Generierung
-  * API-Handler
-* Nutze `go test`, z. B.:
+- Nutze `go test`, z. B.:
 
 ```bash
 go test ./...
@@ -147,8 +146,8 @@ urlshortener/
 
 ## 🧠 Präsentationsideen fürs Portfolio
 
-* Zeige **Live-Demo** mit `ngrok` oder auf `fly.io`
-* Dokumentiere mit `README.md` und Screenshots/Postman
-* Baue eine kleine `curl`- oder Swagger-Doku ein
-* Zeige gute **Projektstruktur + Testabdeckung**
-* Link zu GitHub-Repo mit sauberem Commit-Verlauf
+- Zeige **Live-Demo** mit `ngrok` oder auf `fly.io`
+- Dokumentiere mit `README.md` und Screenshots/Postman
+- Baue eine kleine `curl`- oder Swagger-Doku ein
+- Zeige gute **Projektstruktur + Testabdeckung**
+- Link zu GitHub-Repo mit sauberem Commit-Verlauf

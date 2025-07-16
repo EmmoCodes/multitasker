@@ -1,37 +1,49 @@
-package urlshort
+package handler
 
 import (
-	"net/http"
+	"net/url"
+	"strings"
+	"time"
 )
 
-// MapHandler will return an http.HandlerFunc (which also
-// implements http.Handler) that will attempt to map any
-// paths (keys in the map) to their corresponding URL (values
-// that each key in the map points to, in string format).
-// If the path is not provided in the map, then the fallback
-// http.Handler will be called instead.
-func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
-	//	TODO: Implement this...
+type URLinfo struct {
+	OriginalURL string
+	CreatedAt   time.Time
+	Clicks      int
+}
+
+type ShortURL struct {
+	ShortURL  string
+	CreatedAt time.Time
+	URLinfo
+}
+
+func validateURL(input string) error {
+	_, err := url.ParseRequestURI(input)
+	if err != nil {
+		panic(err)
+	}
 	return nil
 }
 
-// YAMLHandler will parse the provided YAML and then return
-// an http.HandlerFunc (which also implements http.Handler)
-// that will attempt to map any paths to their corresponding
-// URL. If the path is not provided in the YAML, then the
-// fallback http.Handler will be called instead.
-//
-// YAML is expected to be in the format:
-//
-//   - path: /some-path
-//     url: https://www.some-url.com/demo
-//
-// The only errors that can be returned all related to having
-// invalid YAML data.
-//
-// See MapHandler to create a similar http.HandlerFunc via
-// a mapping of paths to urls.
-func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-	// TODO: Implement this...
-	return nil, nil
+func TrimURL(input string) (string, error) {
+	var urlSlice []string
+	var shortURL string
+	input = "https://www.google.com/gopher/nice/jo/hallo/heyo"
+
+	err := validateURL(input)
+	if err != nil {
+		panic(err)
+	}
+
+	trimmedURL := strings.Split(input, "/")
+	urlSlice = append(urlSlice, trimmedURL...)
+	for i := 4; i < len(urlSlice); i++ {
+		urlSlice[i] = urlSlice[i] + "/"
+	}
+
+	urlSlice = urlSlice[4:]
+
+	shortURL = strings.Join(urlSlice, "")
+	return shortURL, nil
 }
