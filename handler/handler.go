@@ -25,8 +25,12 @@ type ShortURL struct {
 	URLInfo   URLInfo   `json:"original_url"`
 }
 
+type JSON struct {
+	URLInfo  URLInfo
+	ShortURL ShortURL
+}
+
 func New() error {
-	fileName := "data.json"
 
 	trimmedURL, userInput, err := TrimURL()
 	if err != nil {
@@ -51,6 +55,17 @@ func New() error {
 		URLInfo:   originalURL,
 	}
 
+	err = writeToJson(shortenedURL)
+	if err != nil {
+		return errors.New("Failed to write to json")
+	}
+
+	return nil
+}
+
+func writeToJson(shortenedURL ShortURL) error {
+
+	fileName := "data.json"
 	var urls []ShortURL
 
 	if _, err := os.Stat(fileName); err == nil {
@@ -68,7 +83,7 @@ func New() error {
 	}
 
 	urls = append(urls, shortenedURL)
-	newData, err := json.Marshal(urls)
+	newData, err := json.MarshalIndent(urls, " ", "")
 	if err != nil {
 		return errors.New("Failed to marshal")
 	}
