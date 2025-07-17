@@ -6,6 +6,7 @@ import (
 	"net/url"
 )
 
+// validates checks if userInput is a valid URL and returns it or nil
 func ValidateURL() (string, error) {
 	var userInput string
 

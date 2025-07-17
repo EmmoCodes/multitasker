@@ -22,14 +22,3 @@ func Start() error {
 
 	return nil
 }
-
-func Get() error {
-	Start()
-	url := "https://localhost:" + port + "/hello"
-	resp, err := http.Get(url)
-	if err != nil {
-		return fmt.Errorf("Failed to get request: %v", err)
-	}
-	fmt.Println(resp)
-	return nil
-}

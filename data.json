@@ -98,5 +98,15 @@
  "url": "https://www.example.com/hello/world",
  "created_at": "2025-07-17T14:15:37.846067559+02:00"
  }
+ },
+ {
+ "id": "708aca44-ec77-4776-b47b-cbeae74e65e8",
+ "url": "test/foo/",
+ "created_at": "2025-07-17T16:04:52.989379181+02:00",
+ "original_url": {
+ "id": "708aca44-ec77-4776-b47b-cbeae74e65e8",
+ "url": "https://www.curl.com/test/foo",
+ "created_at": "2025-07-17T16:04:52.989378827+02:00"
+ }
  }
  ]
