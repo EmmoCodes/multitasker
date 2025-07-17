@@ -1,13 +1,15 @@
 package main
 
 import (
+	"log"
+
 	"example.com/url_shortener/handler"
 )
 
 func main() {
 	err := handler.New()
 	if err != nil {
-		return
+		log.Fatalf("Error initializing handler: %v", err)
 	}
 
 }

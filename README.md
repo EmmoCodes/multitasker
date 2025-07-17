@@ -131,8 +131,8 @@ urlshortener/
 ├── main.go
 ├── handlers/
 │   └── shortener.go
-├── models/
-│   └── url.go
+├── router/
+│   └── routes.go
 ├── storage/
 │   └── memory.go
 ├── utils/
