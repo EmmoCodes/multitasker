@@ -11,8 +11,8 @@ Optional: Admin-Interface und User-Auth.
 
 - **Sprache:** Go (Golang)
 - **Web Framework:** `net/http`, optional `gorilla/mux` oder `fiber`
-- **Datenbank:** In-Memory (für Start), optional SQLite / PostgreSQL
-- **Persistenz:** optional JSON-Datei
+- **Datenbank:** SQLite
+- **Persistenz:** JSON-Datei
 - **(Optional) Auth:** JWT für Benutzer
 - **(Optional) Frontend:** kleines Web-UI oder Swagger-Doku
 
@@ -105,13 +105,13 @@ type URLInfo struct {
 
 - Nutze `go test`, z. B.:
 
-```bash
+```zsh
 go test ./...
 ```
 
 ---
 
-## 🚀 Erweiterungen (für Bonuspunkte im Portfolio)
+## 🚀 Erweiterungen
 
 | Feature          | Beschreibung                                            |
 | ---------------- | ------------------------------------------------------- |
@@ -121,33 +121,3 @@ go test ./...
 | 🧼 Vanity-URLs   | Wunsch-Codes (z. B. `myshop`) statt Zufalls-Strings     |
 | 📁 Admin-Panel   | Web-GUI mit Go Template, React oder Svelte              |
 | 📜 Swagger       | OpenAPI-Spezifikation für alle Endpunkte                |
-
----
-
-## 🧱 Projektstruktur (Vorschlag)
-
-```text
-urlshortener/
-├── main.go
-├── handlers/
-│   └── shortener.go
-├── router/
-│   └── routes.go
-├── storage/
-│   └── memory.go
-├── utils/
-│   └── validate.go
-├── tests/
-│   └── handler_test.go
-├── go.mod
-```
-
----
-
-## 🧠 Präsentationsideen fürs Portfolio
-
-- Zeige **Live-Demo** mit `ngrok` oder auf `fly.io`
-- Dokumentiere mit `README.md` und Screenshots/Postman
-- Baue eine kleine `curl`- oder Swagger-Doku ein
-- Zeige gute **Projektstruktur + Testabdeckung**
-- Link zu GitHub-Repo mit sauberem Commit-Verlauf
