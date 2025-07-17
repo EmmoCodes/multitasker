@@ -1,15 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"example.com/url_shortener/handler"
 )
 
 func main() {
-	err := handler.New()
+
+	str, err := handler.New()
 	if err != nil {
-		log.Fatalf("Error initializing handler: %v", err)
+		log.Fatal(err)
 	}
+	fmt.Println(str)
+
+	// http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+	// 	fmt.Fprintf(w, "Hello!")
+	// })
 
 }

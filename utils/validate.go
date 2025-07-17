@@ -8,6 +8,7 @@ import (
 
 func ValidateURL() (string, error) {
 	var userInput string
+
 	fmt.Println("Please enter your URL to shorten:\n ")
 	fmt.Scanln(&userInput)
 

@@ -5,20 +5,26 @@ import (
 	"time"
 
 	"example.com/url_shortener/fileops"
+	"example.com/url_shortener/router"
 	"example.com/url_shortener/utils"
 	"github.com/gofrs/uuid"
 )
 
-func New() error {
+func New() (fileops.ShortURL, error) {
+	go func() {
+		router.Start()
+	}()
+
+	time.Sleep(time.Second * 1)
 	trimmedURL, userInput, err := utils.TrimURL()
 
 	if err != nil {
-		return errors.New("Failed to get shortened URL")
+		return fileops.ShortURL{}, errors.New("Failed to get shortened URL")
 	}
 
 	id, err := uuid.NewV4()
 	if err != nil {
-		return errors.New("Failed to create id.")
+		return fileops.ShortURL{}, errors.New("Failed to create id.")
 	}
 
 	originalURL := fileops.URLInfo{
@@ -36,8 +42,8 @@ func New() error {
 
 	err = fileops.WriteToJson(shortenedURL)
 	if err != nil {
-		return errors.New("Failed to write to json")
+		return fileops.ShortURL{}, errors.New("Failed to write to json")
 	}
 
-	return nil
+	return shortenedURL, nil
 }
