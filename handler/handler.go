@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"example.com/url_shortener/fileops"
@@ -10,11 +11,7 @@ import (
 )
 
 func New() (fileops.ShortURL, error) {
-	// go func() {
-	// 	router.Start()
-	// }()
 
-	time.Sleep(time.Second * 1)
 	trimmedURL, userInput, err := utils.TrimURL()
 	if err != nil {
 		return fileops.ShortURL{}, errors.New("Failed to get shortened URL")
@@ -38,9 +35,16 @@ func New() (fileops.ShortURL, error) {
 		URLInfo:   originalURL,
 	}
 
-	err = fileops.WriteToJson(shortenedURL)
+	// => comment in this following lines to write a json file <=
+	// err = fileops.WriteToJson(shortenedURL)
+	// if err != nil {
+	// 	return fileops.ShortURL{}, errors.New("Failed to write to json")
+	// }
+
+	err = fileops.WriteToDb(trimmedURL, userInput)
 	if err != nil {
-		return fileops.ShortURL{}, errors.New("Failed to write to json")
+		return fileops.ShortURL{}, fmt.Errorf("failed writing to db: %v ", err)
+
 	}
 
 	return shortenedURL, nil

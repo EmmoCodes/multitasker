@@ -1,6 +1,7 @@
 package fileops
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	_ "modernc.org/sqlite"
 )
 
 type URLInfo struct {
@@ -23,8 +25,8 @@ type ShortURL struct {
 	URLInfo   URLInfo   `json:"original_url"`
 }
 
+// if wished so a func to write a json file too, for own documentation of shortened URL's
 func WriteToJson(shortenedURL ShortURL) error {
-	// TODO: change it later for a db!
 	fileName := "data.json"
 	var urls []ShortURL
 
@@ -57,5 +59,30 @@ func WriteToJson(shortenedURL ShortURL) error {
 	}
 
 	fmt.Println("***Created.***")
+	return nil
+}
+
+func WriteToDb(short, long string) error {
+	db, err := sql.Open("sqlite", "./urls.db")
+	if err != nil {
+		return fmt.Errorf("Failed to open file. \n%v", err)
+	}
+	defer db.Close()
+
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS urls (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            short TEXT NOT NULL UNIQUE,
+            long TEXT NOT NULL
+        );`)
+	if err != nil {
+		return fmt.Errorf("Table creation failed. \n%v", err)
+	}
+
+	_, err = db.Exec(`INSERT INTO urls (short, long) VALUES (?, ?)`, short, long)
+	if err != nil {
+		return fmt.Errorf("failed to insert into table: %w", err)
+	}
+	fmt.Println("Gespeichert:", short, "→", long)
 	return nil
 }
