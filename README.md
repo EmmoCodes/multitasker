@@ -1,3 +1,5 @@
+# 🧩 >>>> STILL IN PROGRESS <<<<
+
 # 🧩 Projekt: URL Shortener API (mit Go)
 
 ## 🎯 Ziel
