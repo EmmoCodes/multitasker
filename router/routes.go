@@ -27,6 +27,10 @@ func Start() error {
 	return nil
 }
 
+func createUser() {
+
+}
+
 // postData call a new handler to create a url slice and post it
 func postData(w http.ResponseWriter, r *http.Request) {
 	val, err := handler.New()

@@ -1,16 +1,18 @@
 package main
 
-import (
-	"log"
+import "example.com/url_shortener/user"
 
-	"example.com/url_shortener/router"
-)
+// "log"
+
+// "example.com/url_shortener/router"
 
 func main() {
 	// server start
-	err := router.Start()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err := router.Start()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	userName, err := user.User.New()
 
 }
