@@ -25,7 +25,7 @@ type ShortURL struct {
 	URLInfo   URLInfo   `json:"original_url"`
 }
 
-// if wished so a func to write a json file too, for own documentation of shortened URL's
+// if wished so a func to write a json file, for own documentation of shortened URL's
 func WriteToJson(shortenedURL ShortURL) error {
 	fileName := "data.json"
 	var urls []ShortURL
