@@ -1,8 +1,9 @@
 package main
 
 import (
-	"example.com/url_shortener/router"
 	"log"
+
+	"example.com/url_shortener/router"
 )
 
 func main() {

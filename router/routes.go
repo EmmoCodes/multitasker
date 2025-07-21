@@ -8,6 +8,9 @@ import (
 	"net/http"
 
 	"example.com/url_shortener/handler"
+	"example.com/url_shortener/user"
+	"github.com/gofrs/uuid"
+	"golang.org/x/crypto/bcrypt"
 	_ "modernc.org/sqlite"
 )
 
@@ -17,8 +20,9 @@ func Start() error {
 
 	// general handle funcs for routes
 	http.HandleFunc("/get", getData)
-	http.HandleFunc("/create", postData)
+	http.HandleFunc("/new", postData)
 	http.HandleFunc("/login", getUser)
+	http.HandleFunc("/create", newUser)
 
 	fmt.Printf("Starting server and listen to port: %v\n", port)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
@@ -75,28 +79,75 @@ func getData(w http.ResponseWriter, r *http.Request) {
 
 // get user from db file via sqlite3
 func getUser(w http.ResponseWriter, r *http.Request) {
-	var userName, password string
+	var userName, password, storedHash string
 
-	fmt.Println("Please enter your username")
+	fmt.Println("Please enter your username: ")
 	fmt.Scanln(&userName)
-	fmt.Println("Please enter your password")
+	fmt.Println("Please enter your password: ")
 	fmt.Scanln(&password)
-
 	db, err := sql.Open("sqlite", "./users.db")
 	if err != nil {
 		return
 	}
-	// db.Exec("SELECT 1 FROM users where user = %s", userName)
-	db.Exec("SELECT 1 FROM users where (user_name = %s, password = %s)", userName, password)
-	query := "SELECT 1 FROM users WHERE user_name = ? AND password = ?"
-	row := db.QueryRow(query, userName, password)
+
+	pwHashed, _ := user.HashPassword(password)
+	db.Exec("SELECT 1 FROM users where user = %s", userName)
+	db.Exec("SELECT 1 FROM users where (user_name = %s)", userName, pwHashed)
+	query := "SELECT 1 FROM users WHERE user_name = ?"
+	row := db.QueryRow(query, userName)
 
 	var exists int
 	err = row.Scan(&exists)
 	if err != nil {
 		io.WriteString(w, "User not found. Username or password incorrect.")
 		return
+	} else {
+
+		query = "SELECT password FROM users WHERE user_name = ?"
+		err = db.QueryRow(query, userName).Scan(&storedHash)
+		if err != nil {
+			log.Println("User not found or DB error:", err)
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password))
+		if err != nil {
+			fmt.Println("❌ Login failed.")
+		} else {
+			fmt.Println("✅ Welcome!")
+		}
 	}
-	io.WriteString(w, "User found.")
+
 	defer db.Close()
+}
+
+func newUser(w http.ResponseWriter, r *http.Request) {
+	var userName, userPassword, userChoice string
+
+	var u user.User
+	fmt.Println("Please enter your username")
+	fmt.Scanln(&userName)
+	fmt.Printf("Thanks. you choosed : '%v' as username. Please enter now your password.\n", userName)
+	fmt.Scanln(&userPassword)
+	fmt.Println("Thanks. You wish to create that account now?\nPlease enter: [y/n]")
+	fmt.Scanln(&userChoice)
+	switch userChoice {
+	case "y":
+		id, err := uuid.NewV4()
+		if err != nil {
+			return
+		}
+		u = user.User{
+			Id:           id,
+			UserName:     userName,
+			UserPassword: userPassword,
+		}
+		user.WriteUserToDb(u)
+		return
+	case "n":
+		{
+			fmt.Println("You choosed 'no'. If you wish create a new user now.")
+		}
+	}
+	io.WriteString(w, "User succesfull created.")
 }
