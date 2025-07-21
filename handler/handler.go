@@ -49,3 +49,31 @@ func New() (fileops.ShortURL, error) {
 
 	return shortenedURL, nil
 }
+
+func ChoiceHandler(val string) string {
+	var choice string
+
+	fmt.Println("Please select one of the following options: ")
+	fmt.Println("1: Register")
+	fmt.Println("2: Login")
+	fmt.Println("3: New URL")
+	fmt.Println("4: Show URL list")
+	fmt.Println("q: Exit application")
+	fmt.Scan(&val)
+
+	switch val {
+	case "1":
+		choice = "/register"
+	case "2":
+		choice = "/login"
+	case "3":
+		choice = "/new"
+	case "4":
+		choice = "/get"
+	case "q":
+		choice = "/exit"
+	default:
+		fmt.Println("Please choose an option.")
+	}
+	return choice
+}
