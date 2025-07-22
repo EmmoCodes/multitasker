@@ -2,29 +2,21 @@ package router
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"example.com/url_shortener/handler"
+	"example.com/url_shortener/session"
 	"example.com/url_shortener/user"
-	"github.com/gofrs/uuid"
 	_ "modernc.org/sqlite"
 )
 
 var port string = "8080"
+var sessionToken string
 
-var sessions = map[uuid.UUID]session{}
-
-type session struct {
-	username string
-	expiry   time.Time
-}
-
-func Start() (user.Credentials, error) {
+func Start() (string, error) {
 	// general handle funcs for routes
 	http.HandleFunc("/get", getData)
 	http.HandleFunc("/new", postData)
@@ -36,12 +28,12 @@ func Start() (user.Credentials, error) {
 		log.Fatal(err)
 	}
 
-	creds, err := user.GetUser()
+	_, err := user.GetUser()
 	if err != nil {
 		fmt.Println("Please login or create an account.")
 	}
 
-	return creds, nil
+	return sessionToken, nil
 }
 
 // postData call a new handler to create a url slice and post it
@@ -99,37 +91,9 @@ func newUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func signin(w http.ResponseWriter, r *http.Request) {
-
-	creds, err := user.GetUser()
+	token, err := session.Signin()
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Get the JSON body and decode into credentials
-	err = json.NewDecoder(r.Body).Decode(&creds)
-	if err != nil {
-		// If the structure of the body is wrong, return an HTTP error
-		// w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// Create a new random session token
-	// we use the "github.com/google/uuid" library to generate UUIDs
-	sessionToken, _ := uuid.NewV4()
-	sessionTokenStr := sessionToken.String()
-	expiresAt := time.Now().Add(12 * time.Second)
-
-	// Set the token in the session map, along with the session information
-	sessions[sessionToken] = session{
-		username: creds.Username,
-		expiry:   expiresAt,
-	}
-
-	// Finally, we set the client cookie for "session_token" as the session token we just generated
-	// we also set an expiry time of 120 seconds
-	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   sessionTokenStr,
-		Expires: expiresAt,
-	})
-	fmt.Println("Session token generated.")
+	sessionToken = token
 }
