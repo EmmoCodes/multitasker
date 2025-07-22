@@ -13,21 +13,24 @@ import (
 func main() {
 	go func() {
 		// server start
-		_, err := router.Start()
+		token, err := router.Start()
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Println(token)
 	}()
 
 	time.Sleep(time.Second * 1)
-	var userInput string
-	choice := handler.ChoiceHandler(userInput)
-	url := "http://localhost:8080" + choice
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
+	for {
+		var userInput string
+		choice := handler.ChoiceHandler(userInput)
+		url := "http://localhost:8080" + choice
+		_, err := http.Get(url)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	fmt.Println(resp)
+		time.Sleep(time.Second * 1)
+	}
 
 }
