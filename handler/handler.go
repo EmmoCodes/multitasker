@@ -35,7 +35,7 @@ func New() (fileops.ShortURL, error) {
 		URLInfo:   originalURL,
 	}
 
-	// => comment in this following lines to write a json file <=
+	//! => comment in this following lines to write a json file <=
 	// err = fileops.WriteToJson(shortenedURL)
 	// if err != nil {
 	// 	return fileops.ShortURL{}, errors.New("Failed to write to json")
